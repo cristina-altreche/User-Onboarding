@@ -15,7 +15,7 @@ export default function Form(props) {
       {/* Inputs */}
       <div className="inputs">
         <h3>New User Information</h3>
-        <label>
+        <label htmlFor="name">
           Name&nbsp;
           <input
             value={values.name}
@@ -25,28 +25,29 @@ export default function Form(props) {
           />
         </label>
 
-        <label>
+        <label htmlFor="email">
           Email&nbsp;
           <input
             value={values.email}
             onChange={onInputChange}
             name="email"
-            type="text"
+            type="email"
           />
+          {errors.email.length > 0 ? <p className="error">{errors.email}</p>: null}
         </label>
 
-        <label>
+        <label htmlFor="password">
           Password&nbsp;
           <input
             value={values.password}
             onChange={onInputChange}
             name="password"
-            type="text"
+            type="password"
           />
         </label>
 
-        <label>
-          Agree with Terms of Service
+        <label htmlFor="terms">
+          I have read the Terms and Conditions
           <input
             name="terms"
             type="checkbox"
@@ -58,7 +59,7 @@ export default function Form(props) {
       {/* Submit Section */}
       <div>
         <h3>Add New User</h3>
-        <button disabled={disabled}>submit</button>
+        <button id="submit" >submit</button>
       </div>
 
       {/* Errors */}

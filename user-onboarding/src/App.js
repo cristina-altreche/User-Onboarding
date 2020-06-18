@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Form from "./components/Form";
-import NewForm from './components/NewForm'
+import NewForm from "./components/NewForm";
 
-import FormSchema from "./validation/FormSchema";
+import formSchema from "./validation/formSchema";
 import axios from "axios";
 import * as Yup from "yup";
-import formSchema from "./validation/FormSchema";
 
 const initialFormValues = {
   name: "",
@@ -40,95 +39,97 @@ function App() {
         setUsers(response.data);
       })
       .catch((error) => {
-        console.log(error) 
-
-     });
+        console.log(error);
+      });
   };
 
-  const postNewUser = newUser => {
-    axios.post('https://reqres.in/api/users', newUser)
-      .then(response => {
-        setUsers([...users, response.data])
+  const postNewUser = (newUser) => {
+    axios
+      .post("https://reqres.in/api/users", formValues)
+      .then((response) => {
+        setUsers([...users, response.data]);
       })
-      .catch(err => {
-       console.log(err) 
+      .catch((err) => {
+        console.log(err);
       })
       .finally(() => {
-        setFormValues(initialFormValues)
-      })
-  }
+        setFormValues(initialFormValues);
+      });
+  };
 
-  const onInputChange = evt => {
-    const { name, value } = evt.target
-
-    Yup.reach(FormSchema, name)
-    .validate(value)
-    .then(() => {
-      setFormErrors({
-        ...formErrors,
-        [name]: ""
+  const validate = (e) => {
+    Yup.reach(formSchema, e.target.name)
+      .validate(e.target.value)
+      .then((valid) => {
+        setFormErrors({
+          ...formErrors,
+          [e.target.name]: ""
+        })
       })
-    })
-    .catch(err => {
-      setFormErrors({
-        ...formErrors,
-        [name]: err.errors[0]
-      })
-    })
-  }
-  
+      .catch((err) => {
+        console.log(err.errors);
+        setFormErrors({
+          ...formErrors,
+          [e.target.name]: err.errors[0]
+        })
+      });
+  };
 
-  const onCheckboxChange = evt => {
-    const { name, checked } = evt.target
+  const onInputChange = (e) => {
+    // const { name, value } = e.target
+    validate(e);
+    e.persist()
+    let value =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormValues({
       ...formValues,
-      terms: {
-        ...formValues.terms,
-        [name]:checked
-      }
-    })
-  }
+      [e.target.name]: value,
+    });
+  };
+  //1hour in
 
-  const onSubmit = evt => {
-    evt.preventDefault()
+  const onCheckboxChange = (evt) => {
+    const { name, checked } = evt.target;
+    setFormValues({
+      ...formValues.terms,
+      [name]: checked,
+    });
+  };
+
+  const onSubmit = (evt) => {
+    evt.preventDefault();
 
     const newUser = {
-      name: formValues.name.trim(),
-      email: formValues.email.trim(),
+      name: formValues.name,
+      email: formValues.email,
       password: formValues.password,
-      terms: formValues.terms === true
-    }
-    postNewUser(newUser)
-  }
+      terms: formValues.terms,
+    };
+    postNewUser(newUser);
+  };
 
-  useEffect(() =>{
-    getUsers()
-  }, [])
-  
+  // useEffect(() =>{
+  //   getUsers()
+  // }, [])
+
   useEffect(() => {
-    formSchema.isValid(formValues).then(valid => {
+    formSchema.isValid(formValues).then((valid) => {
       setDisabled(!valid);
-    })
-  }, [formValues])
-
-
-
+    });
+  }, [formValues]);
 
   return (
     <div className="App">
       <Form
-       values={formValues}
-       onInputChange={onInputChange}
-       onCheckboxChange={onCheckboxChange}
-       onSubmit={onSubmit}
-       disabled={disabled}
-       errors={formErrors}
+        values={formValues}
+        onInputChange={onInputChange}
+        onCheckboxChange={onCheckboxChange}
+        onSubmit={onSubmit}
+        disabled={disabled}
+        errors={formErrors}
       />
 
-
-<pre>
-          {JSON.stringify(users)}
-        </pre>
+      <pre>{JSON.stringify(users)}</pre>
     </div>
   );
 }
