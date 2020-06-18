@@ -23,6 +23,7 @@ export default function Form(props) {
             name="name"
             type="text"
           />
+          {errors.name.length > 0 ? <p className="error">{errors.name}</p>: null}
         </label>
 
         <label htmlFor="email">
@@ -44,10 +45,11 @@ export default function Form(props) {
             name="password"
             type="password"
           />
+          {errors.password.length > 0 ? <p className="error">{errors.password}</p>: null}
         </label>
 
         <label htmlFor="terms">
-          I have read the Terms and Conditions
+          Agree with Terms & Conditions
           <input
             name="terms"
             type="checkbox"
@@ -59,7 +61,7 @@ export default function Form(props) {
       {/* Submit Section */}
       <div>
         <h3>Add New User</h3>
-        <button id="submit" >submit</button>
+        <button disabled={disabled} id="submit" >submit</button>
       </div>
 
       {/* Errors */}
